@@ -1,0 +1,90 @@
+[gd_scene load_steps=19 format=3 uid="uid://dgr2agqeryajo"]
+
+[ext_resource type="Script" path="res://Game.gd" id="1_4maaa"]
+[ext_resource type="Script" path="res://scripts/Camera.gd" id="1_miqtj"]
+[ext_resource type="PackedScene" uid="uid://pyoc3p17nx80" path="res://nodes/player/Player.tscn" id="2_goyc0"]
+[ext_resource type="Shader" path="res://scripts/CRT.gdshader" id="3_optvq"]
+[ext_resource type="Shader" path="res://scripts/Waves.gdshader" id="4_5e5u3"]
+[ext_resource type="Shader" path="res://scripts/Starfield.gdshader" id="4_vdr47"]
+[ext_resource type="Script" path="res://scripts/Health.gd" id="6_6js56"]
+[ext_resource type="Texture2D" uid="uid://50060g8hygre" path="res://nodes/health.png" id="7_mhe60"]
+[ext_resource type="AudioStream" uid="uid://c0oarq1yhi35y" path="res://jamuary2020_day22.ogg" id="9_twqdv"]
+[ext_resource type="PackedScene" uid="uid://ctg47b8tvrct0" path="res://nodes/sprite/Sprite.tscn" id="10_vf7d8"]
+[ext_resource type="Texture2D" uid="uid://c183mjev81mim" path="res://nodes/instructions.png" id="11_qqaw8"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_w680x"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dtce3"]
+render_priority = 0
+shader = ExtResource("3_optvq")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wrm1v"]
+render_priority = 0
+shader = ExtResource("4_5e5u3")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8jds2"]
+material = SubResource("ShaderMaterial_wrm1v")
+size = Vector2(1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nvcph"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("7_mhe60")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_f2qhu"]
+material = SubResource("StandardMaterial3D_nvcph")
+size = Vector2(0.5, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7uxf6"]
+render_priority = 0
+shader = ExtResource("4_vdr47")
+shader_parameter/mouse = null
+shader_parameter/speed2 = 0.2
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_4maaa")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
+projection = 1
+current = true
+size = 7.2
+script = ExtResource("1_miqtj")
+
+[node name="CRT" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(8, 0, 0, 0, -4.37114e-08, -4, 0, 1, -1.74846e-07, 0, 0, -1.09268)
+mesh = SubResource("PlaneMesh_w680x")
+surface_material_override/0 = SubResource("ShaderMaterial_dtce3")
+
+[node name="Health" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(5, 0, 0, 0, -4.37114e-08, -0.5, 0, 1, -2.18557e-08, 0, 3.16085, -1.86)
+mesh = SubResource("PlaneMesh_8jds2")
+script = ExtResource("6_6js56")
+
+[node name="Text" type="MeshInstance3D" parent="Camera3D/Health"]
+transform = Transform3D(1, 0, 0, 0, 1, 1.42109e-14, 0, -5.68434e-14, 1, 0, 0.0835004, 0)
+mesh = SubResource("PlaneMesh_f2qhu")
+
+[node name="Starfield" type="MeshInstance3D" parent="Camera3D"]
+transform = Transform3D(8, 0, 0, 0, -8.74228e-08, -4, 0, 2, -1.74846e-07, 0, 0, -2.20242)
+mesh = SubResource("PlaneMesh_w680x")
+surface_material_override/0 = SubResource("ShaderMaterial_7uxf6")
+
+[node name="Player" parent="." instance=ExtResource("2_goyc0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.187898, 0.471577, 0.0065856)
+
+[node name="SpawnTimer" type="Timer" parent="."]
+
+[node name="Tunes" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_twqdv")
+volume_db = 6.0
+autoplay = true
+
+[node name="Instructions" parent="." instance=ExtResource("10_vf7d8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.275803, 0)
+texture = ExtResource("11_qqaw8")
+
+[connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
+[connection signal="finished" from="Tunes" to="." method="_on_tunes_finished"]

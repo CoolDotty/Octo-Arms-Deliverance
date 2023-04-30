@@ -1,0 +1,86 @@
+[gd_scene load_steps=10 format=3 uid="uid://jhga23xfokr5"]
+
+[ext_resource type="Script" path="res://nodes/pistol/Pistol.gd" id="1_cfk5d"]
+[ext_resource type="PackedScene" uid="uid://ctg47b8tvrct0" path="res://nodes/sprite/Sprite.tscn" id="1_fktmq"]
+[ext_resource type="Texture2D" uid="uid://bdmnub86je1pf" path="res://nodes/pistol/arm.png" id="2_enw35"]
+[ext_resource type="AudioStream" uid="uid://dm2qrwpgpv27p" path="res://nodes/pistol/bang.wav" id="4_y4rhd"]
+[ext_resource type="Texture2D" uid="uid://dttdhg6dlw73o" path="res://nodes/pistol/arm2.png" id="5_rr3b0"]
+[ext_resource type="Texture2D" uid="uid://b2rv5vs174fh" path="res://nodes/pistol/arm3.png" id="6_iufx0"]
+
+[sub_resource type="Animation" id="Animation_56cw4"]
+resource_name = "reload"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 0, 0.174533), Vector3(0, 0, -0.174533)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [ExtResource("5_rr3b0"), ExtResource("6_iufx0"), ExtResource("2_enw35")]
+}
+
+[sub_resource type="Animation" id="Animation_23cu6"]
+resource_name = "shoot"
+length = 0.15
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.15),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0.349066), Vector3(0, 0, 0)]
+}
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0.244, 0.05, 0, 0.15, 1, 0.244296, 0.0252076, 0)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_177it"]
+_data = {
+"reload": SubResource("Animation_56cw4"),
+"shoot": SubResource("Animation_23cu6")
+}
+
+[node name="Pistol" type="Node3D"]
+script = ExtResource("1_cfk5d")
+
+[node name="Sprite" parent="." instance=ExtResource("1_fktmq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.244, 0.05, 0)
+texture = ExtResource("2_enw35")
+
+[node name="Bang" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_y4rhd")
+max_polyphony = 7
+
+[node name="BulletSpawn" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.444, 0.104, 0.01)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_177it")
+}
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

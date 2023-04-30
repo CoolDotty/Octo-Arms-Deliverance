@@ -1,0 +1,41 @@
+[gd_scene load_steps=10 format=3 uid="uid://dfw5j8rqlmw72"]
+
+[ext_resource type="Script" path="res://nodes/player/DeadPlayer.gd" id="1_mmtq4"]
+[ext_resource type="PackedScene" uid="uid://ctg47b8tvrct0" path="res://nodes/sprite/Sprite.tscn" id="2_0gh4e"]
+[ext_resource type="Texture2D" uid="uid://5d4rxkaxkq83" path="res://nodes/player/dead.png" id="3_5q0ep"]
+[ext_resource type="Shader" path="res://nodes/player/Boom.gdshader" id="4_gm1he"]
+[ext_resource type="AudioStream" uid="uid://n35qeeyq5yi2" path="res://nodes/player/dead.wav" id="5_m6tt7"]
+[ext_resource type="Texture2D" uid="uid://c01uul5rnm1sk" path="res://nodes/player/gameover.png" id="6_une8o"]
+[ext_resource type="Texture2D" uid="uid://bvnup5a1woa53" path="res://nodes/player/restart.png" id="7_reipk"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_psgvp"]
+render_priority = 0
+shader = ExtResource("4_gm1he")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_wtmhj"]
+material = SubResource("ShaderMaterial_psgvp")
+top_radius = 0.01
+bottom_radius = 0.01
+height = 0.01
+
+[node name="DeadPlayer" type="Node3D"]
+script = ExtResource("1_mmtq4")
+
+[node name="Sprite" parent="." instance=ExtResource("2_0gh4e")]
+texture = ExtResource("3_5q0ep")
+
+[node name="DeathNoise" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_m6tt7")
+autoplay = true
+
+[node name="Boom" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, -0.01)
+mesh = SubResource("CylinderMesh_wtmhj")
+
+[node name="GameOverText" parent="." instance=ExtResource("2_0gh4e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.70128, 0)
+texture = ExtResource("6_une8o")
+
+[node name="Restart" parent="." instance=ExtResource("2_0gh4e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.17103, 0)
+texture = ExtResource("7_reipk")

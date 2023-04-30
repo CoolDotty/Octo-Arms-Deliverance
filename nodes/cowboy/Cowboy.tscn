@@ -1,0 +1,91 @@
+[gd_scene load_steps=10 format=3 uid="uid://4m1uubng01cp"]
+
+[ext_resource type="Script" path="res://nodes/cowboy/Cowboy.gd" id="1_3d65h"]
+[ext_resource type="PackedScene" uid="uid://ctg47b8tvrct0" path="res://nodes/sprite/Sprite.tscn" id="2_iapth"]
+[ext_resource type="Texture2D" uid="uid://g70ecafbh7w5" path="res://nodes/cowboy/cowboy1.png" id="3_00os4"]
+[ext_resource type="Texture2D" uid="uid://cq0gucj8dqk67" path="res://nodes/cowboy/cowboy2.png" id="4_cq28j"]
+[ext_resource type="Texture2D" uid="uid://byapvnr6yflr3" path="res://nodes/cowboy/cowboy3.png" id="5_s280s"]
+
+[sub_resource type="Animation" id="Animation_w64fp"]
+resource_name = "prize"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:texture")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("5_s280s")]
+}
+tracks/1/type = "scale_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.5, 1, 0.7, 1, 1)
+
+[sub_resource type="Animation" id="Animation_nyl2o"]
+resource_name = "wave"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:texture")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("3_00os4"), ExtResource("4_cq28j")]
+}
+tracks/1/type = "scale_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.2, 1, 0.7, 1, 1)
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite:offset")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 5)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lcvul"]
+_data = {
+"prize": SubResource("Animation_w64fp"),
+"wave": SubResource("Animation_nyl2o")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jfad6"]
+size = Vector3(0.5, 0.5, 1)
+
+[node name="Cowboy" type="Area3D"]
+script = ExtResource("1_3d65h")
+
+[node name="Sprite" parent="." instance=ExtResource("2_iapth")]
+texture = ExtResource("3_00os4")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_lcvul")
+}
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_jfad6")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

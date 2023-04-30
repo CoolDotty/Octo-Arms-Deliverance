@@ -1,0 +1,99 @@
+[gd_scene load_steps=12 format=3 uid="uid://bxypj6ic2m4vd"]
+
+[ext_resource type="Script" path="res://nodes/revolver/Revolver.gd" id="1_r5qrd"]
+[ext_resource type="PackedScene" uid="uid://ctg47b8tvrct0" path="res://nodes/sprite/Sprite.tscn" id="2_a0eyu"]
+[ext_resource type="Texture2D" uid="uid://chd1nqhffxl2q" path="res://nodes/revolver/revolver3.png" id="3_2g3dv"]
+[ext_resource type="Texture2D" uid="uid://bucqc8muylev7" path="res://nodes/revolver/revolver.png" id="3_dwrcb"]
+[ext_resource type="AudioStream" uid="uid://dixfh4ujf2yqd" path="res://nodes/revolver/Bang.wav" id="4_airxr"]
+[ext_resource type="Texture2D" uid="uid://bof4544abtoym" path="res://nodes/revolver/revolverR.png" id="5_wfb3h"]
+[ext_resource type="Texture2D" uid="uid://d4dfjqaad3rbi" path="res://nodes/revolver/revolver2.png" id="5_xn40h"]
+
+[sub_resource type="Animation" id="Animation_oyj2t"]
+length = 0.001
+tracks/0/type = "position_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 0.219, 0.09, 0)
+
+[sub_resource type="Animation" id="Animation_56cw4"]
+resource_name = "reload"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0001, 0.0002, 0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("5_wfb3h"), ExtResource("5_xn40h"), ExtResource("5_wfb3h"), ExtResource("3_dwrcb"), ExtResource("5_wfb3h"), ExtResource("3_dwrcb"), ExtResource("5_wfb3h"), ExtResource("3_dwrcb"), ExtResource("5_wfb3h"), ExtResource("3_dwrcb"), ExtResource("5_wfb3h"), ExtResource("3_dwrcb"), ExtResource("3_dwrcb")]
+}
+
+[sub_resource type="Animation" id="Animation_2856n"]
+resource_name = "shoot"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0.279253), Vector3(0, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:texture")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.05),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [ExtResource("5_xn40h"), ExtResource("3_2g3dv")]
+}
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0.219, 0.09, 0, 0.1, 1, 0.219, 0.023, 0)
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_177it"]
+_data = {
+"RESET": SubResource("Animation_oyj2t"),
+"reload": SubResource("Animation_56cw4"),
+"shoot": SubResource("Animation_2856n")
+}
+
+[node name="Revolver" type="Node3D"]
+script = ExtResource("1_r5qrd")
+
+[node name="Sprite" parent="." instance=ExtResource("2_a0eyu")]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0.219, 0.09, 0)
+offset = Vector2(0, 0.308356)
+texture = ExtResource("3_dwrcb")
+
+[node name="Bang" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_airxr")
+max_polyphony = 7
+
+[node name="BulletSpawn" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.444, 0.104, 0.01)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_177it")
+}
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

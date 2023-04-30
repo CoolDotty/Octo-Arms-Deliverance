@@ -1,0 +1,127 @@
+[gd_scene load_steps=14 format=3 uid="uid://pyoc3p17nx80"]
+
+[ext_resource type="PackedScene" uid="uid://ctg47b8tvrct0" path="res://nodes/sprite/Sprite.tscn" id="1_ixbjo"]
+[ext_resource type="Script" path="res://nodes/player/Player.gd" id="1_j6n0q"]
+[ext_resource type="Texture2D" uid="uid://b8cveml4brfvr" path="res://nodes/player/octobase.png" id="2_lbgva"]
+[ext_resource type="Texture2D" uid="uid://c2xupo25o6k3v" path="res://nodes/player/octobase2.png" id="3_6lw1s"]
+[ext_resource type="AudioStream" uid="uid://b3dtt1s54gql7" path="res://nodes/player/step.wav" id="5_x55mx"]
+[ext_resource type="PackedScene" uid="uid://jhga23xfokr5" path="res://nodes/pistol/Pistol.tscn" id="5_yqb44"]
+[ext_resource type="AudioStream" uid="uid://cwjnv4wrnbi7g" path="res://nodes/player/delivery.wav" id="7_y0o8q"]
+[ext_resource type="AudioStream" uid="uid://bhs1txw8qqk40" path="res://nodes/player/hit.wav" id="8_17goa"]
+
+[sub_resource type="Animation" id="Animation_umdq3"]
+resource_name = "breath"
+loop_mode = 1
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.5, 1, 1, 1.1, 1, 1, 1, 1, 1, 1)
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:texture")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_lbgva")]
+}
+tracks/2/type = "position_3d"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = PackedFloat32Array(0, 1, 0, 0, 0)
+
+[sub_resource type="Animation" id="Animation_h8bdn"]
+resource_name = "move"
+loop_mode = 1
+tracks/0/type = "scale_3d"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = PackedFloat32Array(0, 1, 1, 1, 1, 0.5, 1, 0.8, 1.2, 1, 1, 1, 1, 1, 1)
+tracks/1/type = "position_3d"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = PackedFloat32Array(0, 1, 0, 0.01, 0, 0.5, 1, 0, 0.05, 0, 1, 1, 0, 0.01, 0)
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:texture")
+tracks/2/interp = 0
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("2_lbgva"), ExtResource("3_6lw1s"), ExtResource("2_lbgva"), ExtResource("3_6lw1s"), ExtResource("2_lbgva")]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m2iqb"]
+_data = {
+"breath": SubResource("Animation_umdq3"),
+"move": SubResource("Animation_h8bdn")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vf05v"]
+size = Vector3(0.35, 0.35, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c6p42"]
+size = Vector3(0.2, 0.2, 1)
+
+[node name="Player" type="CharacterBody3D"]
+motion_mode = 1
+script = ExtResource("1_j6n0q")
+
+[node name="Sprite" parent="." instance=ExtResource("1_ixbjo")]
+transform = Transform3D(1, 0, 0, 0, 1.06434, 0, 0, 0, 1, 0, 0, 0)
+texture = ExtResource("2_lbgva")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Sprite"]
+libraries = {
+"": SubResource("AnimationLibrary_m2iqb")
+}
+
+[node name="PBox" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_vf05v")
+
+[node name="Guns" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.01)
+
+[node name="Pistol" parent="Guns" instance=ExtResource("5_yqb44")]
+
+[node name="Gun_swap_timer" type="Timer" parent="."]
+wait_time = 0.33
+one_shot = true
+
+[node name="StepNoise" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_x55mx")
+max_polyphony = 10
+
+[node name="EquipNoise" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_y0o8q")
+
+[node name="Hitbox" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
+shape = SubResource("BoxShape3D_c6p42")
+
+[node name="IFrames" type="Timer" parent="."]
+one_shot = true
+
+[node name="HitNoise" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_17goa")
+
+[connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]

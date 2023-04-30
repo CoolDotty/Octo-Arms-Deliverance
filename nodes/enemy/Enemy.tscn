@@ -1,0 +1,75 @@
+[gd_scene load_steps=11 format=3 uid="uid://biakok82r0ipv"]
+
+[ext_resource type="PackedScene" uid="uid://ctg47b8tvrct0" path="res://nodes/sprite/Sprite.tscn" id="1_6tj3f"]
+[ext_resource type="Script" path="res://nodes/enemy/Enemy.gd" id="1_osgm4"]
+[ext_resource type="Texture2D" uid="uid://cv5yw4p4djm5h" path="res://nodes/enemy/base.png" id="3_i7w07"]
+[ext_resource type="AudioStream" uid="uid://cs0nru63m24df" path="res://nodes/enemy/step.wav" id="4_32516"]
+[ext_resource type="Texture2D" uid="uid://danm5tgy2vn84" path="res://nodes/enemy/base2.png" id="5_l26ut"]
+[ext_resource type="AudioStream" uid="uid://dvnbmrgr1xgyc" path="res://nodes/enemy/hit.wav" id="6_bb75p"]
+[ext_resource type="AudioStream" uid="uid://1cp8dssvugat" path="res://nodes/enemy/dead.wav" id="7_vyr4v"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cjxse"]
+size = Vector3(0.3, 0.3, 1)
+
+[sub_resource type="Animation" id="Animation_1644y"]
+resource_name = "move"
+length = 0.2
+loop_mode = 1
+step = 0.01
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [ExtResource("3_i7w07"), ExtResource("5_l26ut"), ExtResource("3_i7w07")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(1, 0.75, 1), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wosc3"]
+_data = {
+"move": SubResource("Animation_1644y")
+}
+
+[node name="Enemy" type="Area3D"]
+script = ExtResource("1_osgm4")
+
+[node name="Sprite" parent="." instance=ExtResource("1_6tj3f")]
+transform = Transform3D(1, 0, 0, 0, 0.9, 0, 0, 0, 1, 0, 0, 0)
+texture = ExtResource("3_i7w07")
+
+[node name="Hitbox" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_cjxse")
+
+[node name="StepNoise" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("4_32516")
+max_polyphony = 10
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_wosc3")
+}
+
+[node name="HitNoise" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("6_bb75p")
+max_polyphony = 6
+
+[node name="DeadNoise" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("7_vyr4v")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

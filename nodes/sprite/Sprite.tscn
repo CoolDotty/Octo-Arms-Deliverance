@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://ctg47b8tvrct0"]
+
+[node name="Sprite" type="Sprite3D"]
+alpha_cut = 1
+texture_filter = 0
